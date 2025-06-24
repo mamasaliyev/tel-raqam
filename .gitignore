@@ -1,38 +1,13 @@
-# Python __pycache__ va kompilyatsiya fayllari
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-
-# Virtual muhit (masalan, venv)
-venv/
+.venv
+venv
+env
 .env
-*.env
-
-# SQLite ma'lumotlar bazasi
+.idea
+__pycache__
+migrations/*
+!migrations/__init__.py
+*.sqlite3
 db.sqlite3
-*.db
-
-# IDE fayllari (masalan, PyCharm)
-.idea/
-.vscode/
-
-# OS fayllari
-.DS_Store
-Thumbs.db
-
-# Docker build qoldiqlari
-*.log
-*.pid
-
-# Pytest va coverage fayllari
-htmlcov/
-.coverage
-.cache/
-
-# Migrations cache (ixtiyoriy, agar har safar saqlanmasa)
-**/migrations/__pycache__/
-
-# Agar static fayllarni collectstatic orqali yig‘ayotgan bo‘lsang:
-staticfiles/
-media/
+mediafiles
+staticfiles
+dump.rdb

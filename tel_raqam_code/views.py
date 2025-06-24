@@ -5,57 +5,57 @@ from rest_framework import status
 from .serializer import RegisterSerializer, VerifyCodeSerializer
 from .models import User
 from django.conf import settings
-from tel_raqam_code.utils import verify
+# from tel_raqam_code.utils import verify
 import logging
-import vonage  # Asl kutubxona
+# import vonage  # Asl kutubxona
 
 
-
-logger = logging.getLogger(__name__)
-
-# Vonage Client va Verify obyekti bitta joyda
-client = vonage.Client(key=settings.VONAGE_API_KEY, secret=settings.VONAGE_API_SECRET)
-verify_client = vonage.Verify(client)
-
-class RegisterView(APIView):
-    def post(self, request):
-        serializer = RegisterSerializer(data=request.data)
-        if serializer.is_valid():
-            phone_number = serializer.validated_data['phone_number']
-
-            try:
-                # 🔽 Vonage orqali SMS yuborish shu yerda bo‘ladi
-                response = verify.start_verification(
-                    number=phone_number,
-                    brand=settings.VONAGE_BRAND_NAME
-                )
-
-                if response["status"] == "0":
-                    # Foydalanuvchini yaratish yoki olish
-                    user, created = User.objects.get_or_create(
-                        phone_number=phone_number,
-                        defaults={'is_verified': False}
-                    )
-                    user.request_id = response["request_id"]
-                    user.save()
-
-                    return Response({
-                        "message": "Tasdiqlash kodi yuborildi",
-                        "request_id": response["request_id"]
-                    }, status=status.HTTP_200_OK)
-
-                else:
-                    return Response({
-                        "error": response.get("error_text", "Noma'lum xato")
-                    }, status=status.HTTP_400_BAD_REQUEST)
-
-            except Exception as e:
-                return Response({
-                    "error": f"Xatolik yuz berdi: {str(e)}"
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+#
+# logger = logging.getLogger(__name__)
+#
+# # Vonage Client va Verify obyekti bitta joyda
+# client = vonage.Client(key=settings.VONAGE_API_KEY, secret=settings.VONAGE_API_SECRET)
+# verify_client = vonage.Verify(client)
+#
+# class RegisterView(APIView):
+#     def post(self, request):
+#         serializer = RegisterSerializer(data=request.data)
+#         if serializer.is_valid():
+#             phone_number = serializer.validated_data['phone_number']
+#
+#             try:
+#                 # 🔽 Vonage orqali SMS yuborish shu yerda bo‘ladi
+#                 response = verify.start_verification(
+#                     number=phone_number,
+#                     brand=settings.VONAGE_BRAND_NAME
+#                 )
+#
+#                 if response["status"] == "0":
+#                     # Foydalanuvchini yaratish yoki olish
+#                     user, created = User.objects.get_or_create(
+#                         phone_number=phone_number,
+#                         defaults={'is_verified': False}
+#                     )
+#                     user.request_id = response["request_id"]
+#                     user.save()
+#
+#                     return Response({
+#                         "message": "Tasdiqlash kodi yuborildi",
+#                         "request_id": response["request_id"]
+#                     }, status=status.HTTP_200_OK)
+#
+#                 else:
+#                     return Response({
+#                         "error": response.get("error_text", "Noma'lum xato")
+#                     }, status=status.HTTP_400_BAD_REQUEST)
+#
+#             except Exception as e:
+#                 return Response({
+#                     "error": f"Xatolik yuz berdi: {str(e)}"
+#                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#
 
 class VerifyCodeView(APIView):
     def post(self, request):

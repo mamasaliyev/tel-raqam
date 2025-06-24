@@ -75,36 +75,25 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-#
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-import os
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', 'phone'),
-        'USER': os.environ.get('POSTGRES_USER', 'user_phone'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'password_phone'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'db'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+        'NAME': 'tel',  # PostgreSQL bazasi nomi
+        'USER': 'user_tel',  # PostgreSQL foydalanuvchi nomi
+        'PASSWORD': 'password_tel',  # PostgreSQL paroli
+        'HOST': 'tel_db',  # Docker Compose'dagi konteyner nomi
+        'PORT': '5432',  # PostgreSQL uchun standart port
     }
 }
+
+
 
 
 # Password validation
@@ -141,8 +130,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
-
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -153,6 +145,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Endi .env fayldan o'qilgan qiymatlar bilan ishlashingiz mumkin:
-VONAGE_API_KEY = os.getenv("e7fc3bf0")
-VONAGE_API_SECRET = os.getenv("7Z82p2w7aPXH0He8")
-VONAGE_BRAND_NAME = os.getenv("tel_raqam_code", "tel_raqam_code")  # Default qiymat
+# VONAGE_API_KEY = os.getenv("e7fc3bf0")
+# VONAGE_API_SECRET = os.getenv("7Z82p2w7aPXH0He8")
+# VONAGE_BRAND_NAME = os.getenv("tel_raqam_code", "tel_raqam_code")  # Default qiymat

@@ -1,28 +1,35 @@
+# Base image
 FROM python:3.10
 
+# Working directory
+WORKDIR /Tel
+
+# Environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Ishchi katalog
-WORKDIR /app
+# Install system dependencies
+RUN apt-get update && apt-get install -y build-essential libpq-dev
 
-# OS kutubxonalar (dlib uchun kerak bo‘lsa)
-RUN apt-get update && apt-get install -y \
-    build-essential cmake libopenblas-dev liblapack-dev libx11-dev \
-    libgtk-3-dev libboost-all-dev libpq-dev && \
-    rm -rf /var/lib/apt/lists/*
-
-# Talablar
-COPY requirements.txt .
+# Install Python dependencies
+COPY requirements.txt /Tel/
 RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-# Loyihani nusxalash
-COPY . .
+# Create and set permissions for staticfiles folder
+RUN mkdir -p /Tel/staticfiles
+RUN chmod 755 /Tel/staticfiles
 
-# Static/media kataloglar (Docker volume overwrite qiladi baribir)
-RUN mkdir -p /app/staticfiles /app/mediafiles
+# Copy project files
+COPY . /Tel/
 
-# Port ochish
+# Collect static files
+RUN python manage.py collectstatic --noinput
+
+# Django settings
+ENV DJANGO_SETTINGS_MODULE=config.settings
+
+# Expose port
 EXPOSE 8000
 
-# Run qilish — docker-compose orqali beriladi
+# Run migrations and start Daphne server
+CMD ["sh", "-c", "python manage.py migrate && daphne -b 0.0.0.0 -p 8000 einvestment.asgi:application"]
